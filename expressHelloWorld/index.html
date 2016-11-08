@@ -1,4 +1,8 @@
 <html>
+    <head>
+        <title>Default Title</title>
+    </head>
+
     <body>
         <h2>GET method example</h2>
         <form action='http://127.0.0.1:8081/process_get' method = 'GET'>
@@ -12,6 +16,14 @@
              First Name: <input type = "text" name = "first_name"> <br>
              Last Name: <input type = "text" name = "last_name">
              <input type = "submit" value = "Submit">
+        </form>
+
+        <h2>File Upload Section</h2>
+        Select a file to upload: <br>
+
+        <form action='http://127.0.0.1:8081/file_upload' method = 'POST' enctype='multipart/form-data'>
+            <input type='file' name='file' size='50'><br>
+            <input type='submit' value='Upload File'>
         </form>
     </body>
 </html>

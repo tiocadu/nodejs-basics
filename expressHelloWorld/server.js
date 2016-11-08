@@ -1,9 +1,15 @@
 var express = require('express');
 var app = express();
+
 var bodyParser = require('body-parser');
+var multer = require('multer');
+
+var fs = require('fs');
 
 // Create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({extended: false});
+app.use(bodyParser.urlencoded({extended: false}));
+
+var upload = multer({dest: '/tmp/'}).single('file');
 
 app.use(express.static('public'));
 app.get('/index.html', function (req, res) {
@@ -20,7 +26,7 @@ app.get('/process_get', function (req, res) {
     res.end(JSON.stringify(response));
 });
 
-app.post('/process_post', urlencodedParser, function (req, res) {
+app.post('/process_post', function (req, res) {
     // Prepare output in JSON format
     response = {
         first_name: req.body.first_name,
@@ -28,6 +34,30 @@ app.post('/process_post', urlencodedParser, function (req, res) {
     };
     console.log(response);
     res.end(JSON.stringify(response));
+});
+
+// method to handle file upload
+app.post('/file_upload', multer({ dest: '/tmp'}).single('file'), function (req, res) {
+    console.log(JSON.stringify(req.file));
+    console.log(req.file.filename);
+    console.log(req.file.path);
+    console.log(req.file.mimetype);
+    var file = __dirname + '/' + req.file.filename;
+
+    fs.readFile(req.file.path, function (err, data) {
+        fs.writeFile(file, data, function (err) {
+            if (err) {
+                console.log(err);
+            }else{
+                response = {
+                    message: 'File uploaded succesfully',
+                    filename: req.file.filename
+                };
+            };
+            console.log(response);
+            res.end(JSON.stringify(response));
+        });
+    });
 });
 
 app.get('/', function (req, res) {
